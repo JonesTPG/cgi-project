@@ -1,0 +1,88 @@
+#!/usr/bin/env node
+
+//tämä skripti populoi databasen aloitusdatalla, eli tämä ajetaan ennenkuin sovellusta ruvetaan käyttämään vaikkapa
+//dockerin avulla
+
+var async = require('async')
+var Appointment = require('../models/appointment')
+var Specialist = require('../models/specialist')
+
+var config = require('../config/database')
+
+var mongoose = require('mongoose');
+var mongoURL = config.url;
+mongoose.connect(mongoURL);
+mongoose.Promise = global.Promise;
+var db = mongoose.connection;
+mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+var specialists = []
+var appointments = []
+
+function specialistCreate(firstname, lastname, uid, role, created, cb) {
+    specialistdetail = {firstname:firstname , lastname: lastname, 
+                    uid: uid, role: role, created: created }
+   
+    
+    var specialist = new Specialist(specialistdetail);
+         
+    specialist.save(function (err) {
+      if (err) {
+        cb(err, null)
+        return
+      }
+      console.log('New Specialist: ' + specialist);
+      specialists.push(specialist)
+      cb(null, specialist)
+    }  );
+  }
+
+  function appointmentCreate(uuid, startTime, endTime, status, visitorName, notes, cb) {
+    appointmentdetail = { uuid:uuid , startTime: startTime, endTime: endTime, status: status, visitorName: visitorName,
+        notes: notes }
+    
+    
+    var appointment = new Appointment(appointmentdetail);
+         
+    appointment.save(function (err) {
+      if (err) {
+        cb(err, null)
+        return
+      }
+      console.log('New appointment: ' + appointment);
+      appointments.push(appointment)
+      cb(null, appointment)
+    }  );
+  }
+
+
+
+  function createSpecialists(cb) {
+      async.parallel([
+          function(callback) {
+                specialistCreate('Jaakko', 'Heikkinen', 1, 'erikoislääkäri', new Date(), callback);
+          },
+          function(callback) {
+            specialistCreate('Markku', 'Leppänen', 2, 'kirurgi', new Date(), callback);
+        },
+          function(callback) {
+            specialistCreate('Heikki', 'Turunen', 3, 'kirurgi', new Date(), callback);
+        },  
+      ],
+      cb);
+  }
+
+
+  async.series([
+      createSpecialists
+  ],
+  function(err, results) {
+      if (err) {
+          console.log("error" + err);
+      }
+      else {
+          console.log("kaikki lisätty onnistuneesti.");
+      }
+
+      mongoose.connection.close();
+  });
