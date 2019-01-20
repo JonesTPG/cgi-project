@@ -19,9 +19,9 @@ mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection 
 var specialists = []
 var appointments = []
 
-function specialistCreate(firstname, lastname, uid, role, created, cb) {
-    specialistdetail = {firstname:firstname , lastname: lastname, 
-                    uid: uid, role: role, created: created }
+function specialistCreate(firstname, lastname, role, created, timeslots, cb) {
+    specialistdetail = { firstname:firstname , lastname: lastname, 
+        role: role, created: created, timeslots: timeslots }
    
     
     var specialist = new Specialist(specialistdetail);
@@ -60,13 +60,13 @@ function specialistCreate(firstname, lastname, uid, role, created, cb) {
   function createSpecialists(cb) {
       async.parallel([
           function(callback) {
-                specialistCreate('Jaakko', 'Heikkinen', 1, 'erikoislääkäri', new Date(), callback);
+                specialistCreate('Jaakko', 'Heikkinen', 'erikoislääkäri', new Date(), [], callback);
           },
           function(callback) {
-            specialistCreate('Markku', 'Leppänen', 2, 'kirurgi', new Date(), callback);
+            specialistCreate('Markku', 'Leppänen', 'kirurgi', new Date(), [], callback);
         },
           function(callback) {
-            specialistCreate('Heikki', 'Turunen', 3, 'kirurgi', new Date(), callback);
+            specialistCreate('Heikki', 'Turunen', 'kirurgi', new Date(), [], callback);
         },  
       ],
       cb);

@@ -9,9 +9,9 @@ var specialistSchema = mongoose.Schema({
    
         firstname    : String,
         lastname     : String,
-        uid          : String,
         role         : String,
-        created      : Date
+        created      : Date,
+        timeslots    : []
     
 
 });
