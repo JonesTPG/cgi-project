@@ -12,7 +12,6 @@ router.get('/all', function(req, res, next) {
     }); 
 });
 
-
 //route, joka luo uuden asiantuntijan tietokantaan
 router.post('/', function(req, res, next) {
   console.log("luodaan uusi asiantuntija...");
@@ -37,7 +36,7 @@ router.post('/', function(req, res, next) {
   specialist.lastname = lastname;
   specialist.role = role;
   specialist.created = created;
-  specialits.timeslots = [];
+  specialist.timeslots = [];
 
   specialist.save(function(err) {
     if (err) {
@@ -49,7 +48,5 @@ router.post('/', function(req, res, next) {
   })
 
 });
-
-
 
 module.exports = router;

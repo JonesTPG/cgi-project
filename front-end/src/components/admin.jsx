@@ -69,9 +69,7 @@ class Admin extends Component {
                             lastname={this.state.selected.lastname}
                         />
                     </div>
-                        
-                    
-
+                
                 </div>
     
             </div>

@@ -3,7 +3,6 @@ import './App.css';
 import Client from './components/client';
 import Admin from './components/admin';
 
-
 //react-sovelluksen pääkomponentti. pidetään state reactin best practicen mukaisesti mahdollisimman ylhäällä.
 class App extends Component {
 
@@ -19,7 +18,6 @@ class App extends Component {
 
   }
 
-  
   handleClick = () => this.setState({isAdmin: !this.state.isAdmin});
 
   render() {

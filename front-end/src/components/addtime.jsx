@@ -68,11 +68,7 @@ class AddTime extends Component {
                   infoMessage: 'Aika lisätty.'
               })
             });
-        };
-        
-
-        
-        
+        };    
     }
 
     render() { 

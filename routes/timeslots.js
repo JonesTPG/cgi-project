@@ -19,7 +19,6 @@ router.get('/free', function(req, res, next) {
         return;
     }
    
-
     //spesialistia ei ole spesifioitu url-parametrissa
     if (specialist == undefined) {
         Appointment.find({
@@ -99,7 +98,7 @@ router.put('/:id', function(req, res, next) {
             if (err) {
               console.log(err);
             }
-            res.status(200).send();
+            res.json({message: "aika varattu."});
           });
 
     });
@@ -123,7 +122,6 @@ let validateData = (data) => {
     }
     return 1;
 }
-
 
 let saveAppointment = (data) => {
     var newAp = new Appointment();
@@ -172,9 +170,5 @@ let saveAppointmentToSpecialist = (data) => {
 
     });
 }
-
-
-
-
 
 module.exports = router;
