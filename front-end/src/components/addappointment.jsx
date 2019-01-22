@@ -20,7 +20,7 @@ class AddAppointment extends Component {
         if (this.props.id !== prevProps.id) {
         
 
-        let url = 'http://localhost:3000/api/v1/timeslots/free?from='
+        let url = 'http://localhost:8080/api/v1/timeslots/free?from='
         + this.state.filterStart.toJSON() + '&to=' + this.state.filterEnd.toJSON() + '&specialists='
         + this.props.id;
 
@@ -38,9 +38,9 @@ class AddAppointment extends Component {
 
     handleClick = (id) => {
         console.log("varataan aika" + id);
-        axios.put('http://localhost:3000/api/v1/timeslots/'+id).then((response)=> {
+        axios.put('http://localhost:8080/api/v1/timeslots/'+id).then((response)=> {
             
-            let url = 'http://localhost:3000/api/v1/timeslots/free?from='
+            let url = 'http://localhost:8080/api/v1/timeslots/free?from='
             + this.state.filterStart.toJSON() + '&to=' + this.state.filterEnd.toJSON() + '&specialists='
             + this.props.id;
 

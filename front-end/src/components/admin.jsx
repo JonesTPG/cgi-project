@@ -15,7 +15,7 @@ class Admin extends Component {
 
     //haetaan spesialistit apista
     componentDidMount() {
-        axios.get('http://localhost:3000/api/v1/specialists/all').then((response)=> {
+        axios.get('http://localhost:8080/api/v1/specialists/all').then((response)=> {
         this.setState({
             specialists: JSON.parse(response.data)
         })

@@ -59,7 +59,7 @@ class AddTime extends Component {
                 date: dateTime
             }
             axios
-            .post("http://localhost:3000/api/v1/timeslots", data)
+            .post("http://localhost:8080/api/v1/timeslots", data)
             .then(() => {
               console.log("aika lisätty.");
               this.setState({
