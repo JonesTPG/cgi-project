@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 class AddTime extends Component {
     constructor(props) {
@@ -53,8 +54,21 @@ class AddTime extends Component {
             let minutes = time.substring(3,5);
 
             let dateTime = new Date(year, month-1, day, hour, minutes);
-            console.log(dateTime.toString());
-        }
+            let data = {
+                specialistID: this.props.id,
+                date: dateTime
+            }
+            axios
+            .post("http://localhost:3000/api/v1/timeslots", data)
+            .then(() => {
+              this.setState({
+                infoMessage: "Arvostelu tallennettu."
+              });
+              this.props.updateFunction();
+            });
+        };
+        
+
         
         
     }

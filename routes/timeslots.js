@@ -9,23 +9,25 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/free', function(req, res, next) {
-    let start = req.query.from;
-    let end = req.query.to;
+    let start = new Date(req.query.from);
+    let end = new Date(req.query.to);
+    console.log(start + " " + end)
     let specialist = req.query.specialists;
 
     if (start == undefined || end == undefined) {
         res.json({message: "tarkista url-parametrit."});
         return;
     }
-    let startDate = new Date(2019, 1, 21, 13, 30)
-    let endDate = new Date(2019, 1, 25, 13, 30)
+   
+
     //spesialistia ei ole spesifioitu url-parametrissa
     if (specialist == undefined) {
         Appointment.find({
             startTime: {
-                $gte: startDate,
-                $lte: endDate
-            }
+                $gte: start,
+                $lte: end
+            },
+            status: "free"
         })
         .lean()
         .exec(function(err, results) {
@@ -36,10 +38,11 @@ router.get('/free', function(req, res, next) {
     else {
         Appointment.find({
             startTime: {
-                $gte: startDate,
-                $lte: endDate
+                $gte: start,
+                $lte: end
             },
-            specialistID: specialist
+            specialistID: specialist,
+            status: "free"
         })
         .lean()
         .exec(function(err, results) {
@@ -55,11 +58,14 @@ router.get('/free', function(req, res, next) {
 router.post('/', function(req, res, next) {
 
     console.log("lisätään varattavissa olevia aikoja asiantuntijalle...");
+    console.log(req.body.date + " " + req.body.specialistID);
+    let startTime = new Date(req.body.date);
+    let endTime = new Date(req.body.date);
+    endTime = endTime.setMinutes(endTime.getMinutes() + 20);
     let reqData = {
         specialistID: req.body.specialistID,
-        date: req.body.day,
-        startTime: new Date(2019, 1, 24, 13, 30),
-        endTime: new Date(2019, 1, 24, 13, 50),
+        startTime: startTime,
+        endTime: endTime,
         status: "free",
         visitorName: "unknown",
         notes: "nothing"
@@ -75,16 +81,34 @@ router.post('/', function(req, res, next) {
     //tallennetaan varattu aika sekä spesialist että appointment-kokoelmaan
     saveAppointment(reqData);
     saveAppointmentToSpecialist(reqData);
-    res.json({message: "ajat lisätty."});
-        
-})
+    res.json({message: "ajat lisätty."});     
+});
 
+
+//put request, jolla tietyn ajan voi muuttaa varatuksi. käytännössä siis mongossa kenttä "status" muutetaan
+//tilasta "free" tilaan "reserved"
+
+router.put('/:id', function(req, res, next) {
+    console.log("put request id: " + req.params.id);
+    Appointment.findOne({
+        _id: req.params.id
+    }, function(err, doc) {
+
+        doc.status = "reserved";
+        doc.save(function (err) {
+            if (err) {
+              console.log(err);
+            }
+            res.status(200).send();
+          });
+
+    });
+});
 
 //tarkistetaan onko data ok.
 let validateData = (data) => {
     let o = {
         specialistID: data.specialistID,
-        date: data.date,
         startTime: data.startTime,
         endTime: data.endTime,
         status: data.status,
@@ -97,7 +121,6 @@ let validateData = (data) => {
             return -1;
         }
     }
-
     return 1;
 }
 
@@ -107,7 +130,6 @@ let saveAppointment = (data) => {
     newAp.specialistID = data.specialistID;
     newAp.startTime = data.startTime;
     newAp.endTime = data.endTime;
-    newAp.date = data.date;
     newAp.status = data.status;
     newAp.visitorName = data.visitorName;
     newAp.notes = data.notes;
@@ -126,7 +148,6 @@ let saveAppointmentToSpecialist = (data) => {
     
     let newAppointment = {
         specialistID: data.specialistID,
-        date: data.date,
         startTime: data.startTime,
         endTime: data.endTime,
         status: data.status,
@@ -151,6 +172,8 @@ let saveAppointmentToSpecialist = (data) => {
 
     });
 }
+
+
 
 
 

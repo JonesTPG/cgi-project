@@ -9,7 +9,6 @@ var appointmentSchema = mongoose.Schema({
         specialistID : String,
         startTime    : Date,
         endTime      : Date,
-        date         : String,
         status       : String,
         visitorName  : String,
         notes        : String

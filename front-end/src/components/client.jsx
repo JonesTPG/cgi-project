@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
 import Specialist from './specialist';
+import AddAppointment from './addappointment';
 
 
 //react-sovelluksen pääkomponentti. pidetään state reactin best practicen mukaisesti mahdollisimman ylhäällä.
@@ -11,7 +12,8 @@ class Client extends Component {
     super(props);
 
     this.state = {
-      specialists: null
+      specialists: null,
+      selected: {}
     };
 
   }
@@ -29,9 +31,9 @@ class Client extends Component {
 
   //funktio, joka annetaan proppina specialistille. tämän avulla pidetään kirjaa, minkä
   //spesialistin käyttäjä on valinnut
-  updateSelected = (id) => {
-    console.log("selected:" + id)
-    this.setState({selected: id})
+  updateSelected = (specialist) => {
+    console.log("selected:" + specialist.id)
+    this.setState({selected: specialist})
   } 
 
   render() {
@@ -66,7 +68,11 @@ class Client extends Component {
                 )
           }
           </div>
-          <p>varaa aika</p>
+          <AddAppointment 
+             id={this.state.selected.id}
+             firstname={this.state.selected.firstname}
+             lastname={this.state.selected.lastname}
+          />
           </div>
 
         </div>
