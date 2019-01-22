@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import axios from 'axios';
-import Specialist from './components/specialist';
+import Client from './components/client';
+import Admin from './components/admin';
 
 
 //react-sovelluksen pääkomponentti. pidetään state reactin best practicen mukaisesti mahdollisimman ylhäällä.
@@ -10,58 +10,46 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+
     this.state = {
-      specialists: null
+      isAdmin: false
     };
+   
+    console.log("pohjasivu")
 
   }
 
-  //haetaan spesialistit apista
-  componentDidMount() {
-    axios.get('http://localhost:3000/api/v1/specialists/all').then((response)=> {
-      console.log(response.data);
-      this.setState({
-        specialists: JSON.parse(response.data)
-      })
-      return;
-  });
-
-
-  }
+  
+  handleClick = () => this.setState({isAdmin: !this.state.isAdmin});
 
   render() {
-
-    //spesialisteja ei ole vielä saatu ladattua apista
-    if (this.state.specialists == null) {
+    //admin-näkymä
+    if (this.state.isAdmin) {
       return (
-        <p>ladataan tietoja apista</p>
+        <div className="App">
+          <h2 className="center">CGI-project: admin</h2>
+          <div className="center">
+            <button className="waves-effect blue darken-1 btn white-text" onClick={this.handleClick}>Asiakas-näkymä</button>
+          </div>
+          <Admin />
+        </div>
       )
     }
-
-    //spesialistit ladattu, renderöidään frontti
+    //asiakasnäkymä
     else {
       return (
         <div className="App">
         
-          <h2 className="center">Varaa aika spesialistilta</h2>
-
-          {
-              this.state.specialists.map(specialist => (
-                <Specialist 
-                  firstname={specialist.firstname}
-                  lastname={specialist.lastname}
-                  role={specialist.role}
-                  key={specialist._id}
-                />
-
-              )
-                )
-
-          }
+        <h2 className="center">CGI-project</h2>
+        <div className="center">
+          <button className="waves-effect blue darken-1 btn white-text" onClick={this.handleClick}>Admin-näkymä</button>
+        </div>
+        <Client />
 
         </div>
       );
     }
+    
   }
 }
 
