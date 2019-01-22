@@ -8,6 +8,49 @@ router.get('/', function(req, res, next) {
   res.json('Timeslot router');
 });
 
+router.get('/free', function(req, res, next) {
+    let start = req.query.from;
+    let end = req.query.to;
+    let specialist = req.query.specialists;
+
+    if (start == undefined || end == undefined) {
+        res.json({message: "tarkista url-parametrit."});
+        return;
+    }
+    let startDate = new Date(2019, 1, 21, 13, 30)
+    let endDate = new Date(2019, 1, 25, 13, 30)
+    //spesialistia ei ole spesifioitu url-parametrissa
+    if (specialist == undefined) {
+        Appointment.find({
+            startTime: {
+                $gte: startDate,
+                $lte: endDate
+            }
+        })
+        .lean()
+        .exec(function(err, results) {
+            res.json(JSON.stringify(results));
+        });
+    }
+    //spesialisti on spesifioitu url-parametrissa
+    else {
+        Appointment.find({
+            startTime: {
+                $gte: startDate,
+                $lte: endDate
+            },
+            specialistID: specialist
+        })
+        .lean()
+        .exec(function(err, results) {
+            res.json(JSON.stringify(results));
+        });
+
+    }
+
+    
+});
+
 // lisää varattavia aikoja asiantuntijalle. 
 router.post('/', function(req, res, next) {
 
@@ -15,8 +58,8 @@ router.post('/', function(req, res, next) {
     let reqData = {
         specialistID: req.body.specialistID,
         date: req.body.day,
-        startTime: req.body.startTime,
-        endTime: req.body.endTime,
+        startTime: new Date(2019, 1, 24, 13, 30),
+        endTime: new Date(2019, 1, 24, 13, 50),
         status: "free",
         visitorName: "unknown",
         notes: "nothing"
