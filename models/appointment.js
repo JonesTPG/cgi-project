@@ -6,10 +6,10 @@ var mongoose = require('mongoose');
 
 var appointmentSchema = mongoose.Schema({
 
-   
-        uuid         : String,
-        startTime    : Date,
-        endTime      : Date,
+        specialistID : String,
+        startTime    : String,
+        endTime      : String,
+        date         : String,
         status       : String,
         visitorName  : String,
         notes        : String

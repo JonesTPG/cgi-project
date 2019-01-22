@@ -1,49 +1,114 @@
 var express = require('express');
 var router = express.Router();
 var Specialist = require('../models/specialist');
+var Appointment = require('../models/appointment')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.json('Timeslot router');
 });
 
-// lisää varattavia aikoja asiantuntijalle
+// lisää varattavia aikoja asiantuntijalle. 
 router.post('/', function(req, res, next) {
 
     console.log("lisätään varattavissa olevia aikoja asiantuntijalle...");
-    let specialistID = req.body.specialistID;
-    let day = req.body.day;
-    let startTime = req.body.startTime;
-    let endTime = req.body.endTime;
-
-    if ( specialistID == null || day == null || startTime == null || endTime == null ) {
-        res.json( { message: "uusia aikoja ei voitu tallentaa." })
+    let reqData = {
+        specialistID: req.body.specialistID,
+        date: req.body.day,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        status: "free",
+        visitorName: "unknown",
+        notes: "nothing"
+    }
+    
+    //validoitaan data. ajansäästön vuoksi kovin ihmeellisiä validointeja ei tehdä.
+    if ( validateData(reqData) == -1 ) {
+        res.json({message: "ajan lisääminen ei onnistunut."});
         return;
     }
+    
+    
+    //tallennetaan varattu aika sekä spesialist että appointment-kokoelmaan
+    saveAppointment(reqData);
+    saveAppointmentToSpecialist(reqData);
+    res.json({message: "ajat lisätty."});
+        
+})
 
-    console.log(day + " " + startTime + " " + endTime);
+
+//tarkistetaan onko data ok.
+let validateData = (data) => {
+    let o = {
+        specialistID: data.specialistID,
+        date: data.date,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        status: data.status,
+        visitorName: data.visitorName,
+        notes: data.notes
+    }
+
+    for (let key in o) {
+        if (o[key] == null) {
+            return -1;
+        }
+    }
+
+    return 1;
+}
+
+
+let saveAppointment = (data) => {
+    var newAp = new Appointment();
+    newAp.specialistID = data.specialistID;
+    newAp.startTime = data.startTime;
+    newAp.endTime = data.endTime;
+    newAp.date = data.date;
+    newAp.status = data.status;
+    newAp.visitorName = data.visitorName;
+    newAp.notes = data.notes;
+
+    newAp.save(function(err) {
+        if (err) {
+            throw err;
+        }
+
+        console.log("saved");
+    })
+
+}
+
+let saveAppointmentToSpecialist = (data) => {
     
-    
-    Specialist.findOne({_id: specialistID}, function(err, doc) {
+    let newAppointment = {
+        specialistID: data.specialistID,
+        date: data.date,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        status: data.status,
+        visitorName: data.visitorName,
+        notes: data.notes
+    }
+
+    Specialist.findOne({_id: data.specialistID}, function(err, doc) {
 
         if (err) {
-            res.json({message: "valittua spesialistia ei löytynyt"});
-            return;
+            throw err;
         }
-        doc.firstname = "Markku";
+
+        doc.timeslots.push(newAppointment);
+
         doc.save(function (err) {
             if (err) {
               console.log(err);
             }
       
-            res.json({message: "ajat lisätty."});
           });
 
-       
-    })
-        
-            
+    });
+}
 
-})
+
 
 module.exports = router;
