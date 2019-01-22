@@ -66,7 +66,7 @@ class AddAppointment extends Component {
             )
         }
 
-        else if (this.state.timeslots.length == 0) {
+        else if (this.state.timeslots.length === 0) {
             return (
                 <div>
                     <h3>Tällä spesialistilla ei ole vapaita aikoja.</h3>

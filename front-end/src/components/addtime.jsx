@@ -34,7 +34,7 @@ class AddTime extends Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
-        if (this.state.date == '' || this.state.startTime == '') {
+        if (this.state.date === '' || this.state.startTime === '') {
             alert('Tarkista että molemmissa kohdissa on oikeanlainen syöte.');
             return;
         }
