@@ -61,10 +61,12 @@ class AddTime extends Component {
             axios
             .post("http://localhost:3000/api/v1/timeslots", data)
             .then(() => {
+              console.log("aika lisätty.");
               this.setState({
-                infoMessage: "Arvostelu tallennettu."
-              });
-              this.props.updateFunction();
+                  date: '',
+                  startTime: '',
+                  infoMessage: 'Aika lisätty.'
+              })
             });
         };
         
@@ -98,8 +100,9 @@ class AddTime extends Component {
                             Kellonaika: (hh:mm)
                         <input type="text" value={this.state.startTime} onChange={this.handleStartTimeChange} />
                         </label>
-                        <input type="submit" value="Submit" />
+                        <input type="submit" value="Lähetä" />
                     </form>
+                    <p>{this.state.infoMessage}</p>
                 </div>
              );
         }

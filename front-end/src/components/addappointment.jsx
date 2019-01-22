@@ -10,14 +10,10 @@ class AddAppointment extends Component {
             startTime: '',
             timeslots: [],
             filterStart: new Date(2019,0,1,8,15),
-            filterEnd: new Date(2020,1,1,8,15)
+            filterEnd: new Date(2020,1,1,8,15),
+            message: ''
          }
     }
-
-    componentDidMount() {
-        this.setState({id: this.props.id})    
-    }
-
     //komponentin tulee vaihtaa näytettävä spesialisti sen mukaan,
     //minkä id:n se saa proppina
     componentDidUpdate(prevProps, prevState) {
@@ -30,8 +26,6 @@ class AddAppointment extends Component {
 
 
         axios.get(url).then((response)=> {
-            
-            console.log(response.data);
             this.setState({
                 id: this.props.id,
                 timeslots: JSON.parse(response.data)
@@ -44,6 +38,23 @@ class AddAppointment extends Component {
 
     handleClick = (id) => {
         console.log("varataan aika" + id);
+        axios.put('http://localhost:3000/api/v1/timeslots/'+id).then((response)=> {
+            
+            let url = 'http://localhost:3000/api/v1/timeslots/free?from='
+            + this.state.filterStart.toJSON() + '&to=' + this.state.filterEnd.toJSON() + '&specialists='
+            + this.props.id;
+
+            //jos put-request onnistui, haetaan kannasta jäljellä olevat vapaat ajat.
+            axios.get(url).then((response)=> {
+                this.setState({
+                    id: this.props.id,
+                    timeslots: JSON.parse(response.data),
+                    message: response.data.message
+                });
+                return;
+            });
+            return;
+          });
     }
 
     render() { 
@@ -64,7 +75,6 @@ class AddAppointment extends Component {
         }
 
         else {
-            
             return ( 
                 <div>
                     <h3>Valittu spesialisti: {this.props.firstname} {this.props.lastname}</h3> 
@@ -78,19 +88,15 @@ class AddAppointment extends Component {
                                         onClick={() => this.handleClick(timeslot._id)}>
                                         Varaa
                                 </button>
+                                
                             </div>
                             )
                         )
                     }
-
-                    
                 </div>
              );
-        }
-        
+        }   
     }
-
-    
 }
  
 export default AddAppointment;

@@ -26,7 +26,7 @@ class Admin extends Component {
     //funktio, joka annetaan proppina specialistille. tämän avulla pidetään kirjaa, minkä
     //spesialistin käyttäjä on valinnut
     updateSelected = (specialist) => {
-        console.log("selected:" + specialist._id)
+        
         this.setState({selected: specialist})
     }
 
