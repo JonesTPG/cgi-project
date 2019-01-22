@@ -84,6 +84,7 @@ class AddAppointment extends Component {
                             
                             <div key={timeslot._id}>
                                 <p>ajankohta: {timeslot.startTime} - {timeslot.endTime}</p>
+                                <p>id: {timeslot._id}</p>
                                 <button className="waves-effect blue darken-1 btn white-text"
                                         onClick={() => this.handleClick(timeslot._id)}>
                                         Varaa
